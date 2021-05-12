@@ -1,6 +1,6 @@
-FROM python:3.9.5-alpine3.13
+FROM node:10.24.1-alpine3.11
 
-RUN apk update && apk add git npm
+RUN apk update && apk add git python3 py3-pip
 RUN npm install -g codefresh
 RUN pip install pyyaml
 
