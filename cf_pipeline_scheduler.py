@@ -4,29 +4,29 @@
 Describe the usage of this module
 """
 
-import os
-# import sys
+import os           # to read env vars
 import logging
-import subprocess
+import subprocess   # to run codefresh process
 import yaml
 
 def run_cmd(cmd, args_with_spaces=[], input=None, fail_on_non_zero=True, no_log_cmd=False):
     """Run a command in the OS. Any command args that contain spaces should be 
     passed separately in the args_with_spaces list param (don't include quotes)"""
+    log_cmd = cmd
+    for arg in args_with_spaces:
+        log_cmd += " " + arg
+    if no_log_cmd: log_cmd = "[REDACTED]"
+    print(log_cmd)
     result = subprocess.run(cmd.split() + args_with_spaces, 
         input=input, 
         stdout=subprocess.PIPE,   # send stderr to stdout
         stderr=subprocess.STDOUT)
     output = result.stdout.decode('utf-8').rstrip()
     returncode = result.returncode
-    for arg in args_with_spaces:
-        cmd += " " + arg
-    if no_log_cmd: cmd = "[REDACTED]"
-    summary = "\n  Command: {}".format(cmd) + \
+    summary = "\n  Command: {}".format(log_cmd) + \
                 "\n  Return code: {}".format(returncode) + \
                 "\n  Output:\n{}".format(output)
     if fail_on_non_zero: assert(returncode == 0), summary
-    logging.info(summary)
     return output, returncode
 
 def verify_input_file_structure(input_file_dict):
@@ -49,7 +49,7 @@ def verify_input_file_structure(input_file_dict):
 def set_logging(log_level_env_var):
     """ Log level is INFO unless a valid LOG_LEVEL env var was provided
     """
-    log_level = 'INFO'  # Default log level
+    log_level = 'WARN'  # Default log level
     if str(log_level_env_var).upper() in ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']:
         log_level = log_level_env_var
     logging.basicConfig(level=log_level)
@@ -97,7 +97,7 @@ def main():
         cmd_args = [deploy_pipeline, "--detach", "-t=" + deploy_trigger, "-b=" + deploy_branch, "-v=CLIENT=" + client,
             "-v=REGION=" + region, "-v=ENV=" + env, "-v=FULLLAYERPATH=" + fulllayerpath]
         output, exit_code = run_cmd(cmd, cmd_args)
-        logging.info("Started build ID " + output)
+        print("Started build ID " + output)
 
 if __name__ == "__main__":
     main()
