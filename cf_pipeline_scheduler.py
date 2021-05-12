@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 
-"""Module docstring.
-Describe the usage of this module
+""" Run a codefresh pipeline build for each list item in a provided scheduling YAML file.
+    Required environment variables:
+      - SCHEDULE_FILE = path to the scheduling YAML file
+      - DEPLOY_PIPELINE = name of the pipeline to run, format: project/pipeline
+      - DEPLOY_TRIGGER = name of the trigger within the pipeline to run (includes the Git repo)
+      - DEPLOY_BRANCH = Git branch
+    Optional environment variables
+      - LOG_LEVEL = set the logging level (ex: DEBUG)
 """
 
 import os           # to read env vars
 import logging
-import subprocess   # to run codefresh process
+import subprocess   # to run the codefresh process
 import yaml
 
 def run_cmd(cmd, args_with_spaces=[], input=None, fail_on_non_zero=True, no_log_cmd=False):
@@ -97,7 +103,7 @@ def main():
         cmd_args = [deploy_pipeline, "--detach", "-t=" + deploy_trigger, "-b=" + deploy_branch, "-v=CLIENT=" + client,
             "-v=REGION=" + region, "-v=ENV=" + env, "-v=FULLLAYERPATH=" + fulllayerpath]
         output, exit_code = run_cmd(cmd, cmd_args)
-        print("\nStarted build ID " + output + "\n")
+        print("\nStarted build https://g.codefresh.io/build/" + output + "\n")
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,32 @@
+version: "1.0"
+stages:
+  - clone
+  - terraform
+
+steps:
+
+  main_clone:
+    title: Clone git repo
+    type: git-clone
+    stage: clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}'
+
+  terraform_plan:
+    title: Terraform Plan
+    stage: terraform
+    image: alpine  # hashicorp/terraform
+    commands:
+      - "echo terraform plan $CF_BRANCH $CLIENT $REGION $ENV $FULLLAYERPATH"
+  
+  terraform_apply:
+    title: Terraform Apply
+    stage: terraform
+    image: alpine  # hashicorp/terraform
+    commands:
+      - "echo terraform apply $CF_BRANCH $CLIENT $REGION $ENV $FULLLAYERPATH"
+    when:
+      branch:
+        only:
+          - master
+          - main
