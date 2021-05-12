@@ -26,7 +26,7 @@ def run_cmd(cmd, args_with_spaces=[], input=None, fail_on_non_zero=True, no_log_
                 "\n  Return code: {}".format(returncode) + \
                 "\n  Output:\n{}".format(output)
     if fail_on_non_zero: assert(returncode == 0), summary
-    logging.debug(summary)
+    logging.info(summary)
     return output, returncode
 
 def verify_input_file_structure(input_file_dict):
@@ -97,7 +97,7 @@ def main():
         cmd_args = [deploy_pipeline, "--detach", "-t=" + deploy_trigger, "-b=" + deploy_branch, "-v=CLIENT=" + client,
             "-v=REGION=" + region, "-v=ENV=" + env, "-v=FULLLAYERPATH=" + fulllayerpath]
         output, exit_code = run_cmd(cmd, cmd_args)
-        logging.info(output)
+        logging.info("Started build ID " + output)
 
 if __name__ == "__main__":
     main()
