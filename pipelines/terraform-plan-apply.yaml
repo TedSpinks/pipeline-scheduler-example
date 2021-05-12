@@ -25,6 +25,11 @@ steps:
     image: alpine
     commands:
       - echo Creating a PR to master!
+    when:
+      branch:
+        ignore:
+          - master
+          - main
   
   terraform_apply:
     title: Terraform Apply
@@ -34,5 +39,6 @@ steps:
       - "echo terraform apply $CF_BRANCH $CLIENT $REGION $ENV $FULLLAYERPATH"
     when:
       branch:
-        only:  # only or ignore
+        only:
           - master
+          - main
