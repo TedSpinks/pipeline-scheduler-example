@@ -19,18 +19,6 @@ steps:
     commands:
       - "echo terraform plan $CF_BRANCH $CLIENT $REGION $ENV $FULLLAYERPATH"
   
-  create_pr:
-    title: Create PR to master/prod
-    stage: terraform
-    image: alpine
-    commands:
-      - echo Creating a PR to master!
-    when:
-      branch:
-        ignore:
-          - master
-          - main
-  
   terraform_apply:
     title: Terraform Apply
     stage: terraform
