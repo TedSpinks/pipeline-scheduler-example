@@ -94,7 +94,7 @@ def main():
         env = deployment['env']
         fulllayerpath = deployment['fulllayerpath']
         cmd = "codefresh run"
-        cmd_args = [deploy_pipeline, "-t=" + deploy_trigger, "-b=" + deploy_branch, "-v CLIENT=" + client,
+        cmd_args = [deploy_pipeline, "--detach", "-t=" + deploy_trigger, "-b=" + deploy_branch, "-v CLIENT=" + client,
             "-v REGION=" + region, "-v ENV=" + env, "-v FULLLAYERPATH=" + fulllayerpath]
         output, exit_code = run_cmd(cmd, cmd_args)
         logging.info(output)
