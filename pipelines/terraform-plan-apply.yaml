@@ -1,9 +1,7 @@
 version: "1.0"
 stages:
   - clone
-  - plan
-  - promote
-  - apply
+  - terraform
 
 steps:
 
@@ -16,21 +14,21 @@ steps:
 
   terraform_plan:
     title: Terraform Plan
-    stage: plan
+    stage: terraform
     image: alpine  # hashicorp/terraform
     commands:
       - "echo terraform plan $CF_BRANCH $CLIENT $REGION $ENV $FULLLAYERPATH"
   
   create_pr:
     title: Create PR to master/prod
-    stage: promote
+    stage: terraform
     image: alpine
     commands:
       - echo Creating a PR to master!
   
   terraform_apply:
     title: Terraform Apply
-    stage: apply
+    stage: terraform
     image: alpine  # hashicorp/terraform
     commands:
       - "echo terraform apply $CF_BRANCH $CLIENT $REGION $ENV $FULLLAYERPATH"
