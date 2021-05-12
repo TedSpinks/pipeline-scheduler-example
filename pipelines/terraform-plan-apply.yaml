@@ -1,0 +1,40 @@
+version: "1.0"
+stages:
+  - clone
+  - plan
+  - promote
+  - apply
+
+steps:
+
+  main_clone:
+    title: Clone git repo
+    type: git-clone
+    stage: clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}'
+
+  terraform_plan:
+    title: Terraform Plan
+    stage: plan
+    image: alpine  # hashicorp/terraform
+    commands:
+      - "echo terraform plan $CF_BRANCH $CLIENT $REGION $ENV $FULLLAYERPATH"
+  
+  create_pr:
+    title: Create PR to master/prod
+    stage: promote
+    image: alpine
+    commands:
+      - echo Creating a PR to master!
+  
+  terraform_apply:
+    title: Terraform Apply
+    stage: apply
+    image: alpine  # hashicorp/terraform
+    commands:
+      - "echo terraform apply $CF_BRANCH $CLIENT $REGION $ENV $FULLLAYERPATH"
+    when:
+      branch:
+        only:  # only or ignore
+          - master
