@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 
-"""Module docstring.
-Describe the usage of this module
+""" Run a codefresh pipeline build for each list item in a provided scheduling YAML file.
+    Required environment variables:
+      - SCHEDULE_FILE = path to the schduling YAML file
+      - DEPLOY_PIPELINE = name of the pipeline to run, format: project/pipeline
+      - DEPLOY_TRIGGER = name of the trigger within the pipeline to run (includes the Git repo)
+      - DEPLOY_BRANCH = Git branch
+    Optional environment variables
+      - LOG_LEVEL = set the logging level (ex: DEBUG)
 """
 
 import os           # to read env vars
