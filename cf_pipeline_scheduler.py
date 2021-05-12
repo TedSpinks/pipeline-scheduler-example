@@ -2,7 +2,7 @@
 
 """ Run a codefresh pipeline build for each list item in a provided scheduling YAML file.
     Required environment variables:
-      - SCHEDULE_FILE = path to the schduling YAML file
+      - SCHEDULE_FILE = path to the scheduling YAML file
       - DEPLOY_PIPELINE = name of the pipeline to run, format: project/pipeline
       - DEPLOY_TRIGGER = name of the trigger within the pipeline to run (includes the Git repo)
       - DEPLOY_BRANCH = Git branch
@@ -12,7 +12,7 @@
 
 import os           # to read env vars
 import logging
-import subprocess   # to run codefresh process
+import subprocess   # to run the codefresh process
 import yaml
 
 def run_cmd(cmd, args_with_spaces=[], input=None, fail_on_non_zero=True, no_log_cmd=False):
