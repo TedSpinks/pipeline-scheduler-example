@@ -1,0 +1,69 @@
+version: "1.0"
+stages:
+  - prep
+  - run pipelines
+  - report
+
+steps:
+
+  main_clone:
+    title: Clone git repo
+    type: git-clone
+    stage: prep
+    repo: 'https://github.com/TedSpinks/pipeline-scheduler-example.git'
+    revision: 'main'
+
+  get_run_combinations:
+    title: Determine which pipelines to run
+    stage: prep
+    image: alpine
+    working_directory: '${{main_clone}}'
+    commands:
+      - cp example_run_list.yaml /codefresh/volume/run_list.yaml
+
+  run_child_pipelines:
+    title: Run child pipelines dynamically
+    stage: run pipelines
+    type: codefreshdemo/codefresh-run-dynamic
+    arguments:
+      RUN_LIST_YAML_FILE: /codefresh/volume/run_list.yaml
+      WAIT: true
+      LOG_DIRECTORY: /codefresh/volume/my-run-logs
+      # DEBUG: true
+
+  generate_html_summary:
+    title: Generate HTML summary
+    stage: report
+    image: gtspinks/codefresh-run-dynamic:0.0.1
+    commands:
+      - export LOG_DIR=/codefresh/volume/my-run-logs
+      - echo '<!DOCTYPE html><html><body>' > $LOG_DIR/index.htm
+      - >-
+        for BUILD in $CF_BUILDS_STARTED;
+        do
+        echo "<p><h3><a href=\"https://g.codefresh.io/build/${BUILD}\" target=\"_blank\">Build ${BUILD}</a></h3><pre>" >> $LOG_DIR/index.htm;
+        codefresh get build $BUILD -o yaml | grep -i "pipeline-name:\|branch:\|status:\|trigger:" >> $LOG_DIR/index.htm;
+        echo '</pre></p>' >> $LOG_DIR/index.htm;
+        echo '<details><summary>Log</summary><textarea rows="20" cols="120">' >> $LOG_DIR/index.htm;
+        sed -i 's/\&/\&amp;/g' $LOG_DIR/$BUILD.log;
+        sed -i 's/>/\&gt;/g' $LOG_DIR/$BUILD.log;
+        sed -i 's/</\&lt;/g' $LOG_DIR/$BUILD.log;
+        cat $LOG_DIR/$BUILD.log >> $LOG_DIR/index.htm;
+        echo '</textarea></details>' >> $LOG_DIR/index.htm;
+        done
+      - echo '</body></html>' >> $LOG_DIR/index.htm
+      - cat $LOG_DIR/index.htm
+
+  # For more info see https://codefresh.io/docs/docs/testing/test-reports/#using-the-custom-mode-for-generic-reporting
+  upload_report:
+    title: Upload run report
+    stage: report
+    image: codefresh/cf-docker-test-reporting
+    working_directory: /codefresh/volume/
+    environment:
+      - CF_BRANCH_TAG_NORMALIZED=master  # req'd if not using a git trigger in this pipeline
+      - REPORT_DIR=my-run-logs
+      - CLEAR_TEST_REPORT=true
+      - REPORT_INDEX_FILE=index.htm
+      - BUCKET_NAME=codefresh-run-dynamic
+      - CF_STORAGE_INTEGRATION=amazon-s3
