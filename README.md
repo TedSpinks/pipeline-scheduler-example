@@ -2,7 +2,7 @@
 
 ## Deprecation Notice
 
-This step have moved to https://github.com/codefresh-io/steps/tree/master/incubating/codefresh-run-dynamic. All future updates will be in that repo.
+This step has moved to https://github.com/codefresh-io/steps/tree/master/incubating/codefresh-run-dynamic. Any future updates will be there.
 
 ## Directions for installing the custom typed step
 
